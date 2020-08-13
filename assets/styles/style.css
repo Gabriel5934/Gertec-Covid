@@ -18,6 +18,28 @@ form {
     background-color: #0F3561;
 }
 
+#positiveMessage {
+    margin-top: 19vh;
+}
+
+#check {
+    width: 100px; height: 100px;
+    margin-bottom: 50px;
+}
+
+.positiveText {
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    font-weight: 100;
+}
+
+#associate {
+    color: #FFFFFF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 50px;
+}
+
 h1 {
     color: #FCAF26;
     font-family: Arial, Helvetica, sans-serif;
@@ -76,8 +98,8 @@ input[type="radio"]+label, input[type="checkbox"]+label {
     font-weight: 100;
 }
 
-button {
-    width: 100px; height: 50px;
+input[type="submit"] {
+    width: auto; height: 50px;
     border: 0 solid transparent;
     border-radius: 10px;
     margin-top: 20px;
@@ -92,6 +114,40 @@ button {
     form {
         width: 90%; height: auto;
         margin-top: 70px;
+    }
+
+    #feedbackPositive {
+        width: 90%; 
+    }
+
+    .field-container {
+        width: calc(100% - 50px);
+        margin: 15px 15px 0 15px;
+    }
+
+    .field-container:first-of-type {
+        margin: 30px 15px 0 15px;
+    }
+
+    #positiveMessage {
+        margin: 8vh 10px 0 10px;
+    }
+    
+    #check {
+        width: 80px; height: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .positiveText {
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+    }
+    
+    #associate {
+        color: #FFFFFF;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 40px;
     }
 
     h1 {

@@ -1,4 +1,3 @@
-<?php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,7 @@
 </head>
 <body>
     <div id="content-wrapper">
-        <form>
+        <form action="" method="post">
             <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
             <p>
                 Antes de sair de casa para ir ao escritório, nós da Gertec queremos saber como está sua saúde. 
@@ -23,11 +22,11 @@
             <div id="form-wrapper">
                 <div class="field-container">
                     <label for="name">Nome:</label>
-                    <input type="text" name="name">
+                    <input type="text" name="name" required>
                 </div>
                 <div class="field-container">
                     <label for="area">Área:</label>
-                    <select id="area" name="area">
+                    <select id="area" name="area" required>
                         <option value="engenharia">Engenharia</option>
                         <option value="desenvolvimentoDeSoftware">Desenvolvimento de Software</option>
                         <option value="financeiro">Financeiro</option>
@@ -40,21 +39,21 @@
                 </div>
                 <div class="field-container">
                     <h3>Como está sua saúde no momento?<h3>
-                    <input type="radio" id="symptomatic" name="symptoms" value="sintomatico">
+                    <input type="radio" id="symptomatic" name="symptoms" value="assintomatico" required>
                     <label for="symptomatic">Estou bem e sem sintomas</label><br>
-                    <input type="radio" id="asymptomatic" name="symptoms" value="assintomatico">
+                    <input type="radio" id="asymptomatic" name="symptoms" value="sintomatico">
                     <label for="asymptomatic">Estou com alguns sintomas</label><br>
                 </div>
                 <div class="field-container">
                     <h3>Você teve febre (temperatura igual ou superior a 37.8°)?<h3>
-                    <input type="radio" id="withFever" name="fever" value="sim">
+                    <input type="radio" id="withFever" name="fever" value="sim" required>
                     <label for="withFever">Sim</label><br>
                     <input type="radio" id="noFever"name="fever" value="nao">
                     <label for="nofever">Não</label><br>
                 </div>
                 <div class="field-container">
                     <h3>Está sentindo falta de ar ao realizar esforços ou está com respiração ofegante?<h3>
-                    <input type="radio" id="gasping" name="gasp" value="sim">
+                    <input type="radio" id="gasping" name="gasp" value="sim" required>
                     <label for="gasping">Sim</label><br>
                     <input type="radio" id="noGasping" name="gasp" value="nao">
                     <label for="noGasping">Não</label><br>
@@ -62,7 +61,7 @@
                 <div class="field-container">
                     <h3>Como está sua saúde no momento?<h3>
                     <input onchange="extraSelected('congestion')" class="extra" type="checkbox" name="congestion" value="congestaoNasal">
-                    <label for="congestion">Cogestão/Corrimento nasal</label><br>
+                    <label for="congestion">Congestão/Corrimento nasal</label><br>
                     <input onchange="extraSelected('tasteless')" class="extra" type="checkbox" name="tasteless" value="perdaPaladar">
                     <label for="tasteless">Diminuição de olfato/paladar</label><br>
                     <input onchange="extraSelected('soreThroat')" class="extra" type="checkbox" name="soreThroat" value="dorGarganta">
@@ -71,13 +70,70 @@
                     <label for="jointPain">Dores nas articulações</label><br>
                     <input onchange="extraSelected('cough')" class="extra" type="checkbox" name="cough" value="tosse">
                     <label for="cough">Tosse</label><br>
-                    <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="nenhumAcima">
+                    <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="nenhumAcima" checked>
                     <label for="noneAbove">Não tenho nenhum dos sintomas acima</label><br>
                 </div>
-                <button type="submit">ENVIAR</button>
+                <input type="submit" value="ENVIAR">
             </div>
         </form>
     </div>
 </body>
 </html>
+
+<?php 
+if (!empty($_POST)) {
+    $firstFormData = array(
+        $_POST["name"],
+        $_POST["area"],
+        $_POST["symptoms"],
+        $_POST["fever"],
+        $_POST["gasp"],
+    );
+    
+    $extraSymptoms = array(
+        "congestion",
+        "tasteless",
+        "soreThroat",
+        "jointPain",
+        "cough",
+        "noneAbove"
+    );
+    $firstFormExtra = array();
+    
+    foreach ($extraSymptoms as $symptom) {
+        if (isset($_POST[$symptom])) {
+            array_push($firstFormExtra, $_POST[$symptom]);
+        }
+    }
+    
+    if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] = "nenhumAcima") {
+        ?>
+        <style type="text/css">
+            form {
+                display: none;
+            }
+            button {
+                display: none;
+            }
+            body {
+                background-color: #37A647;
+            }
+        </style>
+        <?php
+        $name = $_POST["name"];
+        $area = ucfirst($_POST["area"]);
+        $date = date("d/m/Y");
+        $message = "<div id='content-wrapper'>
+        <div id='positiveMessage'>
+            <img id='check' src='assets/media/check.png'>
+            <h3 class='positiveText'>Baseado nas suas respostas, você está liberado(a) para trabalhar</h3>
+            <h1 id='associate'>$name, $area, $date</h1>
+            <h3 class='positiveText'>A apresentação deste cartão e obrigatória para sua entrada na Gertec</h3>
+        </div>
+        </div>";
+        echo($message);
+    } else {
+        echo("feedback negativo");
+    }
+}
 ?>
