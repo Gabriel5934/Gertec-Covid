@@ -46,17 +46,17 @@ if (!empty($_POST)) {
             <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
             <h2>Continuação</h2>
             <div id="form-wrapper">
-                <div class="field-container">
+            <div class="field-container">
                     <h3>Há quanto tempo está com estes sintomas?<h3>
-                    <input type="radio" id="today" name="today" value="hoje" required>
+                    <input type="radio" id="today" name="time" value="hoje" required>
                     <label for="today">Hoje</label><br>
-                    <input type="radio" id="fiveDays" name="fiveDays" value="cincoDias">
+                    <input type="radio" id="fiveDays" name="time" value="cincoDias">
                     <label for="fiveDays">1 a 5 dias</label><br>
-                    <input type="radio" id="tenDays" name="tenDays" value="seisDias">
+                    <input type="radio" id="tenDays" name="time" value="seisDias">
                     <label for="tenDays">6 a 10 dias</label><br>
-                    <input type="radio" id="thirteenDays" name="thirteenDays" value="trezeDias">
+                    <input type="radio" id="thirteenDays" name="time" value="trezeDias">
                     <label for="thirteenDays">11 a 13 dias</label><br>
-                    <input type="radio" id="moreThan" name="moreThan" value="maisDias">
+                    <input type="radio" id="moreThan" name="time" value="maisDias">
                     <label for="moreThan">Mais de 14 dias</label><br>
                 </div>
                 <div class="field-container">
