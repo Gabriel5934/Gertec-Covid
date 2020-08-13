@@ -1,3 +1,4 @@
+<?php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,9 +74,10 @@
                     <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="nenhumAcima">
                     <label for="noneAbove">Não tenho nenhum dos sintomas acima</label><br>
                 </div>
+                <button type="submit">ENVIAR</button>
             </div>
         </form>
     </div>
 </body>
 </html>
-    
+?>
