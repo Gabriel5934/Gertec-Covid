@@ -1,10 +1,69 @@
+<?php 
+if (!empty($_POST)) {
+    $firstFormData = array(
+        $_POST["name"],
+        $_POST["area"],
+        $_POST["symptoms"],
+        $_POST["fever"],
+        $_POST["gasp"],
+    );
+    
+    $extraSymptoms = array(
+        "congestion",
+        "tasteless",
+        "soreThroat",
+        "jointPain",
+        "cough",
+        "noneAbove"
+    );
+    $firstFormExtra = array();
+    
+    foreach ($extraSymptoms as $symptom) {
+        if (isset($_POST[$symptom])) {
+            array_push($firstFormExtra, $_POST[$symptom]);
+        }
+    }
+    
+    if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] = "nenhumAcima") {
+        ?>
+        <style type="text/css">
+            form {
+                display: none !important;
+            }
+            body {
+                background-color: #37A647 !important;
+            }
+            #content-wrapper {
+                display: none !important;
+            }
+        </style>
+        <?php
+        $name = $_POST["name"];
+        $area = ucfirst($_POST["area"]);
+        $date = date("d/m/Y");
+        $message = "<div id='message-wrapper'>
+        <div id='positiveMessage'>
+            <img id='check' src='assets/media/check.png'>
+            <h3 class='positiveText'>Baseado nas suas respostas, você está liberado(a) para trabalhar</h3>
+            <h1 id='associate'>$name, $area, $date</h1>
+            <h3 class='positiveText'>A apresentação deste cartão e obrigatória para sua entrada na Gertec</h3>
+        </div>
+        </div>";
+        echo($message);
+    } else {
+        header("Location: formContinuacao.php");
+        exit();
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="assets/styles/style.css" media="screen" />
-    <script type="text/javascript" src="assets/scripts/script.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/styles/gertecCovid.css" media="screen" />
+    <script type="text/javascript" src="assets/scripts/gertecCovid.js"></script>
     <title>Avaliação de Saúde</title>
 </head>
 <body>
@@ -80,60 +139,3 @@
 </body>
 </html>
 
-<?php 
-if (!empty($_POST)) {
-    $firstFormData = array(
-        $_POST["name"],
-        $_POST["area"],
-        $_POST["symptoms"],
-        $_POST["fever"],
-        $_POST["gasp"],
-    );
-    
-    $extraSymptoms = array(
-        "congestion",
-        "tasteless",
-        "soreThroat",
-        "jointPain",
-        "cough",
-        "noneAbove"
-    );
-    $firstFormExtra = array();
-    
-    foreach ($extraSymptoms as $symptom) {
-        if (isset($_POST[$symptom])) {
-            array_push($firstFormExtra, $_POST[$symptom]);
-        }
-    }
-    
-    if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] = "nenhumAcima") {
-        ?>
-        <style type="text/css">
-            form {
-                display: none;
-            }
-            button {
-                display: none;
-            }
-            body {
-                background-color: #37A647;
-            }
-        </style>
-        <?php
-        $name = $_POST["name"];
-        $area = ucfirst($_POST["area"]);
-        $date = date("d/m/Y");
-        $message = "<div id='content-wrapper'>
-        <div id='positiveMessage'>
-            <img id='check' src='assets/media/check.png'>
-            <h3 class='positiveText'>Baseado nas suas respostas, você está liberado(a) para trabalhar</h3>
-            <h1 id='associate'>$name, $area, $date</h1>
-            <h3 class='positiveText'>A apresentação deste cartão e obrigatória para sua entrada na Gertec</h3>
-        </div>
-        </div>";
-        echo($message);
-    } else {
-        echo("feedback negativo");
-    }
-}
-?>
