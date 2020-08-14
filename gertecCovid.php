@@ -44,7 +44,7 @@ if (!empty($_POST)) {
     }
 
     $sheet->setCellValue("A$nextRow", date("d/m/Y"));
-    $sheet->setCellValue("B$nextRow", date("h:i:s:u"));
+    $sheet->setCellValue("B$nextRow", date("H:i:s:u"));
     $sheet->setCellValue("C$nextRow", $_POST["name"]);
     $sheet->setCellValue("D$nextRow", $_POST["area"]);
     $sheet->setCellValue("E$nextRow", $_POST["symptoms"]);

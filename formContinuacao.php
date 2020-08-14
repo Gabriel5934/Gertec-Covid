@@ -72,7 +72,7 @@ if (!empty($_POST)) {
     $message->plainTextBody = "This is the Plain Text Body of my message.";
 
     $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-    $message->addToAddress("TODO");
+    $message->addToAddress("gabriel.andrade@outlook.com.br");
     
     $response = $client->send($message);
 
