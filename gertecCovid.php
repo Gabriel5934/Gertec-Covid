@@ -1,4 +1,5 @@
 <?php 
+ini_set('display_errors', '0');
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -33,8 +34,8 @@ if (!empty($_POST)) {
     
     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
     $sheet = $spreadsheet->getActiveSheet();
-
     $value = $sheet->getCell("A2")->getValue();
+
     if ($value == null) {
         $nextRow = 2;
     } else {
@@ -43,7 +44,7 @@ if (!empty($_POST)) {
     }
 
     $sheet->setCellValue("A$nextRow", date("d/m/Y"));
-    $sheet->setCellValue("B$nextRow", date("h:i:s"));
+    $sheet->setCellValue("B$nextRow", date("h:i:s:u"));
     $sheet->setCellValue("C$nextRow", $_POST["name"]);
     $sheet->setCellValue("D$nextRow", $_POST["area"]);
     $sheet->setCellValue("E$nextRow", $_POST["symptoms"]);
@@ -59,7 +60,13 @@ if (!empty($_POST)) {
     }
 
     $writer = new Xlsx($spreadsheet);
-    $writer->save("registros.xlsx");
+
+    try {
+        $writer->save("registros.xlsx");
+    } catch (Exception $e) {
+        echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+        header("Refresh:0");
+    }    
 
     session_start();
     $_SESSION["nextRow"] = $nextRow;
@@ -81,7 +88,7 @@ if (!empty($_POST)) {
         <?php
         $name = $_POST["name"];
         $area = ucfirst($_POST["area"]);
-        $date = date("d/m/Y\, h:i:s");
+        $date = date("d/m/Y\, H:i");
         $message = "<div id='message-wrapper'>
         <div id='positiveMessage'>
             <img id='check' src='assets/media/check.png'>

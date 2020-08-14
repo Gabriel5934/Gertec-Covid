@@ -1,4 +1,5 @@
 <?php 
+ini_set('display_errors', '0');
 require 'vendor/autoload.php';
 include_once ('./vendor/autoload.php'); 
 
@@ -51,7 +52,13 @@ if (!empty($_POST)) {
     }
 
     $writer = new Xlsx($spreadsheet);
-    $writer->save("registros.xlsx");
+
+    try {
+        $writer->save("registros.xlsx");
+    } catch (Exception $e) {
+        echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+        header("Refresh:0");
+    }    
 
     $serverId = $_ENV["SERVER_ID"];
     $injectionApiKey = $_ENV["API_KEY"];
