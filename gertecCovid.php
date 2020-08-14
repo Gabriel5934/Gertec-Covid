@@ -73,31 +73,11 @@ if (!empty($_POST)) {
 
     # Se o colaborador estiver saudável
     if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] == "nenhumAcima") { 
-        ?>
-        <style type="text/css">
-            form {
-                display: none !important;
-            }
-            body {
-                background-color: #37A647 !important;
-            }
-            #content-wrapper {
-                display: none !important;
-            }
-        </style>
-        <?php
-        $name = $_POST["name"];
-        $area = ucfirst($_POST["area"]);
-        $date = date("d/m/Y\, H:i");
-        $message = "<div id='message-wrapper'>
-        <div id='positiveMessage'>
-            <img id='check' src='assets/media/check.png'>
-            <h3 class='positiveText'>Baseado nas suas respostas, você está liberado(a) para trabalhar</h3>
-            <h1 id='associate'>$name, $area, $date</h1>
-            <h3 class='positiveText'>A apresentação deste cartão e obrigatória para sua entrada na Gertec</h3>
-        </div>
-        </div>";
-        echo($message);
+        $_SESSION["name"] = $_POST["name"];
+        $_SESSION["area"] = ucfirst($_POST["area"]);
+        $_SESSION["date"] = date("d/m/Y\, H:i");
+        header("Location: liberado.php");
+        exit();
     } else { # Se o colaborador não estiver saudável
         header("Location: formContinuacao.php");
         exit();
@@ -106,7 +86,7 @@ if (!empty($_POST)) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,7 +96,7 @@ if (!empty($_POST)) {
 </head>
 <body>
     <div id="content-wrapper">
-        <form action="" method="post">
+        <form id="form" action="" method="post">
             <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
             <p>
                 Antes de sair de casa para ir ao escritório, nós da Gertec queremos saber como está sua saúde. 

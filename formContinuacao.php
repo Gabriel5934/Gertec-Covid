@@ -38,6 +38,7 @@ if (!empty($_POST)) {
 
     session_start();
     $nextRow = $_SESSION["nextRow"];
+    $_SESSION["time"] = $_POST["time"];
 
     if (isset($nextRow)) {
         $sheet->setCellValue("I$nextRow", $_POST["time"]);
@@ -76,34 +77,8 @@ if (!empty($_POST)) {
     
     $response = $client->send($message);
 
-    ?>
-    <style type="text/css">
-        form {
-            display: none !important;
-        }
-        body {
-            background-color: #D13636 !important;
-        }
-        #content-wrapper {
-            display: none !important;
-        }
-    </style>
-    <?php
-    $message = "<div id='message-wrapper'>
-    <div id='negativaMessage'>
-        <img id='alert' src='assets/media/alert.png'>
-        <h3 class='negativeText'>
-        Baseado nas suas respostas, você pode ter sido exposto ao coronavírus (COVID-19) e necessita de cuidados especiais. 
-        Recomendamos que procure atendimento com seu médico de confiança ou vá para uma unidade de saúde. Sobre os cuidados 
-        no atendimento hospitalar. Use uma máscara e cubra a boca quando tossir ou espirrar; Não cubra a boca e nariz com a 
-        mão, use um lenço de papel ou braço; Tente evitar metrô, ônibus e outros transportes públicos, e lugares lotados; 
-        Veículos devem ser desinfetados; Informe os médicos sobre seu histórico de saúde; Após a visita ao pronto-socorro, 
-        caso não haja internação volte para casa o mais rápido possível.
-        Equipe de Saúde e Segurança do Trabalho - GERTEC
-        </h3>
-    </div>
-    </div>";
-    echo($message);
+    header("Location: barrado.php");
+    exit();
 }
 ?>
 
