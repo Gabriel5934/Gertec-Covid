@@ -115,6 +115,10 @@ input[type="submit"] {
     font-weight: bold;
 }
 
+input[type="submit"]:hover {
+    cursor: pointer;
+}
+
 @media all and (orientation:portrait) {
     form {
         width: 90%; height: auto;

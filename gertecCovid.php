@@ -1,4 +1,9 @@
 <?php 
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 if (!empty($_POST)) {
     $firstFormData = array(
         $_POST["name"],
@@ -24,7 +29,40 @@ if (!empty($_POST)) {
         }
     }
     
-    if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] = "nenhumAcima") {
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
+    $sheet = $spreadsheet->getActiveSheet();
+
+    $value = $sheet->getCell("A2")->getValue();
+    if ($value == null) {
+        $nextRow = 2;
+    } else {
+        $highestRow = $sheet->getHighestDataRow();
+        $nextRow = $highestRow + 1;
+    }
+
+    $sheet->setCellValue("A$nextRow", date("d/m/Y"));
+    $sheet->setCellValue("B$nextRow", $_POST["name"]);
+    $sheet->setCellValue("C$nextRow", $_POST["area"]);
+    $sheet->setCellValue("D$nextRow", $_POST["symptoms"]);
+    $sheet->setCellValue("E$nextRow", $_POST["fever"]);
+    $sheet->setCellValue("F$nextRow", $_POST["gasp"]);
+    foreach ($firstFormExtra as $symptom) {
+        $value = $sheet->getCell("G$nextRow")->getValue();
+        if ($value == null) {
+            $sheet->setCellValue("G$nextRow", $symptom);
+        } else {
+            $sheet->setCellValue("G$nextRow", $value.", ".$symptom);
+        }
+    }
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save("registros.xlsx");
+
+    session_start();
+    $_SESSION["nextRow"] = $nextRow;
+
+    # Se o colaborador estiver saudável
+    if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] == "nenhumAcima") { 
         ?>
         <style type="text/css">
             form {
@@ -50,7 +88,7 @@ if (!empty($_POST)) {
         </div>
         </div>";
         echo($message);
-    } else {
+    } else { # Se o colaborador não estiver saudável
         header("Location: formContinuacao.php");
         exit();
     }
@@ -118,7 +156,7 @@ if (!empty($_POST)) {
                     <label for="noGasping">Não</label><br>
                 </div>
                 <div class="field-container">
-                    <h3>Como está sua saúde no momento?<h3>
+                    <h3>Possui alguma dessas doenças ou condições de saúde?<h3>
                     <input onchange="extraSelected('congestion')" class="extra" type="checkbox" name="congestion" value="congestaoNasal">
                     <label for="congestion">Congestão/Corrimento nasal</label><br>
                     <input onchange="extraSelected('tasteless')" class="extra" type="checkbox" name="tasteless" value="perdaPaladar">

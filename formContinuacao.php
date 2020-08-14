@@ -1,5 +1,51 @@
 <?php 
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 if (!empty($_POST)) {
+    $conditions = array(
+        "psoriatic",
+        "rheumatoid",
+        "asthma",
+        "cancer",
+        "diabetes",
+        "inflammation",
+        "hypertension",
+        "pregnant",
+        "transplanted",
+        "noneAbove"
+    );
+    $presentConditions = array();
+    
+    foreach ($conditions as $condition) {
+        if (isset($_POST[$condition])) {
+            array_push($presentConditions, $_POST[$condition]);
+        }
+    }
+
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
+    $sheet = $spreadsheet->getActiveSheet();
+
+    session_start();
+    $nextRow = $_SESSION["nextRow"];
+
+    if (isset($nextRow)) {
+        $sheet->setCellValue("H$nextRow", $_POST["time"]);
+        foreach ($presentConditions as $condition) {
+            $value = $sheet->getCell("I$nextRow")->getValue();
+            if ($value == null) {
+                $sheet->setCellValue("I$nextRow", $condition);
+            } else {
+                $sheet->setCellValue("I$nextRow", $value.", ".$condition);
+            }
+        }
+    }
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save("registros.xlsx");
+
     ?>
     <style type="text/css">
         form {
@@ -50,13 +96,13 @@ if (!empty($_POST)) {
                     <h3>Há quanto tempo está com estes sintomas?<h3>
                     <input type="radio" id="today" name="time" value="hoje" required>
                     <label for="today">Hoje</label><br>
-                    <input type="radio" id="fiveDays" name="time" value="cincoDias">
+                    <input type="radio" id="fiveDays" name="time" value="de1a5dias">
                     <label for="fiveDays">1 a 5 dias</label><br>
-                    <input type="radio" id="tenDays" name="time" value="seisDias">
+                    <input type="radio" id="tenDays" name="time" value="de6a10dias">
                     <label for="tenDays">6 a 10 dias</label><br>
-                    <input type="radio" id="thirteenDays" name="time" value="trezeDias">
+                    <input type="radio" id="thirteenDays" name="time" value="de11a13dias">
                     <label for="thirteenDays">11 a 13 dias</label><br>
-                    <input type="radio" id="moreThan" name="time" value="maisDias">
+                    <input type="radio" id="moreThan" name="time" value="maisDe14Dias">
                     <label for="moreThan">Mais de 14 dias</label><br>
                 </div>
                 <div class="field-container">
