@@ -1,8 +1,15 @@
 <?php 
 require 'vendor/autoload.php';
+include_once ('./vendor/autoload.php'); 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Socketlabs\SocketLabsClient;
+use Socketlabs\Message\BasicMessage;
+use Socketlabs\Message\EmailAddress;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 if (!empty($_POST)) {
     $conditions = array(
@@ -32,19 +39,35 @@ if (!empty($_POST)) {
     $nextRow = $_SESSION["nextRow"];
 
     if (isset($nextRow)) {
-        $sheet->setCellValue("H$nextRow", $_POST["time"]);
+        $sheet->setCellValue("I$nextRow", $_POST["time"]);
         foreach ($presentConditions as $condition) {
-            $value = $sheet->getCell("I$nextRow")->getValue();
+            $value = $sheet->getCell("J$nextRow")->getValue();
             if ($value == null) {
-                $sheet->setCellValue("I$nextRow", $condition);
+                $sheet->setCellValue("J$nextRow", $condition);
             } else {
-                $sheet->setCellValue("I$nextRow", $value.", ".$condition);
+                $sheet->setCellValue("J$nextRow", $value.", ".$condition);
             }
         }
     }
 
     $writer = new Xlsx($spreadsheet);
     $writer->save("registros.xlsx");
+
+    $serverId = $_ENV["SERVER_ID"];
+    $injectionApiKey = $_ENV["API_KEY"];
+
+    $client = new SocketLabsClient($serverId, $injectionApiKey);
+    
+    $message = new BasicMessage(); 
+
+    $message->subject = "Sending A Basic Message";
+    $message->htmlBody = "<html>This is the Html Body of my message.</html>";
+    $message->plainTextBody = "This is the Plain Text Body of my message.";
+
+    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    $message->addToAddress("TODO");
+    
+    $response = $client->send($message);
 
     ?>
     <style type="text/css">

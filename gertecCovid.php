@@ -4,6 +4,8 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+date_default_timezone_set("America/Sao_Paulo");
+
 if (!empty($_POST)) {
     $firstFormData = array(
         $_POST["name"],
@@ -41,17 +43,18 @@ if (!empty($_POST)) {
     }
 
     $sheet->setCellValue("A$nextRow", date("d/m/Y"));
-    $sheet->setCellValue("B$nextRow", $_POST["name"]);
-    $sheet->setCellValue("C$nextRow", $_POST["area"]);
-    $sheet->setCellValue("D$nextRow", $_POST["symptoms"]);
-    $sheet->setCellValue("E$nextRow", $_POST["fever"]);
-    $sheet->setCellValue("F$nextRow", $_POST["gasp"]);
+    $sheet->setCellValue("B$nextRow", date("h:i:s"));
+    $sheet->setCellValue("C$nextRow", $_POST["name"]);
+    $sheet->setCellValue("D$nextRow", $_POST["area"]);
+    $sheet->setCellValue("E$nextRow", $_POST["symptoms"]);
+    $sheet->setCellValue("F$nextRow", $_POST["fever"]);
+    $sheet->setCellValue("G$nextRow", $_POST["gasp"]);
     foreach ($firstFormExtra as $symptom) {
-        $value = $sheet->getCell("G$nextRow")->getValue();
+        $value = $sheet->getCell("H$nextRow")->getValue();
         if ($value == null) {
-            $sheet->setCellValue("G$nextRow", $symptom);
+            $sheet->setCellValue("H$nextRow", $symptom);
         } else {
-            $sheet->setCellValue("G$nextRow", $value.", ".$symptom);
+            $sheet->setCellValue("H$nextRow", $value.", ".$symptom);
         }
     }
 
@@ -78,7 +81,7 @@ if (!empty($_POST)) {
         <?php
         $name = $_POST["name"];
         $area = ucfirst($_POST["area"]);
-        $date = date("d/m/Y");
+        $date = date("d/m/Y\, h:i:s");
         $message = "<div id='message-wrapper'>
         <div id='positiveMessage'>
             <img id='check' src='assets/media/check.png'>
