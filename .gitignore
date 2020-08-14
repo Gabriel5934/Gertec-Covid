@@ -1,4 +1,5 @@
 vendor/
 *.json
 *.lock
+*xlsx
 .env
