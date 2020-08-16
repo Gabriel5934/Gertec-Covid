@@ -3,6 +3,8 @@ ini_set('display_errors', '0');
 require 'vendor/autoload.php';
 include_once ('./vendor/autoload.php'); 
 
+date_default_timezone_set("America/Sao_Paulo");
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Socketlabs\SocketLabsClient;
@@ -35,50 +37,82 @@ if (!empty($_POST)) {
 
     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
     $sheet = $spreadsheet->getActiveSheet();
+    $value = $sheet->getCell("A2")->getValue();
+
+    if ($value == null) {
+        $nextRow = 2;
+    } else {
+        $highestRow = $sheet->getHighestDataRow();
+        $nextRow = $highestRow + 1;
+    }
 
     session_start();
-    $nextRow = $_SESSION["nextRow"];
     $_SESSION["time"] = $_POST["time"];
+    $name = $_SESSION["name"];
+    $area = $_SESSION["area"];  
+    $symptoms = $_SESSION["symptoms"];
+    $fever = $_SESSION["fever"];
+    $gasp = $_SESSION["gasp"];
+    $firstFormExtra = $_SESSION["firstFormExtra"];
 
-    if (isset($nextRow)) {
-        $sheet->setCellValue("I$nextRow", $_POST["time"]);
-        foreach ($presentConditions as $condition) {
-            $value = $sheet->getCell("J$nextRow")->getValue();
-            if ($value == null) {
-                $sheet->setCellValue("J$nextRow", $condition);
-            } else {
-                $sheet->setCellValue("J$nextRow", $value.", ".$condition);
-            }
+    $sheet->setCellValue("A$nextRow", date("d/m/Y"));
+    $sheet->setCellValue("B$nextRow", date("H:i:s:u"));
+    $sheet->setCellValue("C$nextRow", $name);
+    $sheet->setCellValue("D$nextRow", $area);
+    $sheet->setCellValue("E$nextRow", $symptoms);
+    $sheet->setCellValue("F$nextRow", $fever);
+    $sheet->setCellValue("G$nextRow", $gasp);
+    foreach ($firstFormExtra as $symptom) {
+        $value = $sheet->getCell("H$nextRow")->getValue();
+        if ($value == null) {
+            $sheet->setCellValue("H$nextRow", $symptom);
+        } else {
+            $sheet->setCellValue("H$nextRow", $value.", ".$symptom);
+        }
+    }
+    $sheet->setCellValue("I$nextRow", $_POST["time"]);
+    foreach ($presentConditions as $condition) {
+        $value = $sheet->getCell("J$nextRow")->getValue();
+        if ($value == null) {
+            $sheet->setCellValue("J$nextRow", $condition);
+        } else {
+            $sheet->setCellValue("J$nextRow", $value.", ".$condition);
         }
     }
 
+    $sheet->getStyle("K$nextRow")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB("FFFF0000");  
+
     $writer = new Xlsx($spreadsheet);
 
+    $caught = false;
     try {
         $writer->save("registros.xlsx");
     } catch (Exception $e) {
+        $caught = true;
         echo  "<script>alert('Algo deu errado, tente novamente');</script>";
         header("Refresh:0");
-    }    
+    }   
 
-    $serverId = $_ENV["SERVER_ID"];
-    $injectionApiKey = $_ENV["API_KEY"];
+    // $serverId = $_ENV["SERVER_ID"];
+    // $injectionApiKey = $_ENV["API_KEY"];
 
-    $client = new SocketLabsClient($serverId, $injectionApiKey);
+    // $client = new SocketLabsClient($serverId, $injectionApiKey);
     
-    $message = new BasicMessage(); 
+    // $message = new BasicMessage(); 
 
-    $message->subject = "Sending A Basic Message";
-    $message->htmlBody = "<html>This is the Html Body of my message.</html>";
-    $message->plainTextBody = "This is the Plain Text Body of my message.";
+    // $message->subject = "Sending A Basic Message";
+    // $message->htmlBody = "<html>This is the Html Body of my message.</html>";
+    // $message->plainTextBody = "This is the Plain Text Body of my message.";
 
-    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-    $message->addToAddress("gabriel.andrade@outlook.com.br");
+    // $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    // $message->addToAddress("#");
     
-    $response = $client->send($message);
+    // $response = $client->send($message);
 
-    header("Location: barrado.php");
-    exit();
+    if (!$caught) {
+        header("Location: barrado.php");
+        exit();
+    }
 }
 ?>
 

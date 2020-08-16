@@ -32,53 +32,65 @@ if (!empty($_POST)) {
         }
     }
     
-    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
-    $sheet = $spreadsheet->getActiveSheet();
-    $value = $sheet->getCell("A2")->getValue();
-
-    if ($value == null) {
-        $nextRow = 2;
-    } else {
-        $highestRow = $sheet->getHighestDataRow();
-        $nextRow = $highestRow + 1;
-    }
-
-    $sheet->setCellValue("A$nextRow", date("d/m/Y"));
-    $sheet->setCellValue("B$nextRow", date("H:i:s:u"));
-    $sheet->setCellValue("C$nextRow", $_POST["name"]);
-    $sheet->setCellValue("D$nextRow", $_POST["area"]);
-    $sheet->setCellValue("E$nextRow", $_POST["symptoms"]);
-    $sheet->setCellValue("F$nextRow", $_POST["fever"]);
-    $sheet->setCellValue("G$nextRow", $_POST["gasp"]);
-    foreach ($firstFormExtra as $symptom) {
-        $value = $sheet->getCell("H$nextRow")->getValue();
-        if ($value == null) {
-            $sheet->setCellValue("H$nextRow", $symptom);
-        } else {
-            $sheet->setCellValue("H$nextRow", $value.", ".$symptom);
-        }
-    }
-
-    $writer = new Xlsx($spreadsheet);
-
-    try {
-        $writer->save("registros.xlsx");
-    } catch (Exception $e) {
-        echo  "<script>alert('Algo deu errado, tente novamente');</script>";
-        header("Refresh:0");
-    }    
-
-    session_start();
-    $_SESSION["nextRow"] = $nextRow;
-
     # Se o colaborador estiver saudável
     if ($firstFormData[2] == "assintomatico" && $firstFormData[3] == "nao" && $firstFormData[4] == "nao" && $firstFormExtra[0] == "nenhumAcima") { 
-        $_SESSION["name"] = $_POST["name"];
-        $_SESSION["area"] = ucfirst($_POST["area"]);
-        $_SESSION["date"] = date("d/m/Y\, H:i");
-        header("Location: liberado.php");
-        exit();
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
+        $sheet = $spreadsheet->getActiveSheet();
+        $value = $sheet->getCell("A2")->getValue();
+    
+        if ($value == null) {
+            $nextRow = 2;
+        } else {
+            $highestRow = $sheet->getHighestDataRow();
+            $nextRow = $highestRow + 1;
+        }
+    
+        $sheet->setCellValue("A$nextRow", date("d/m/Y"));
+        $sheet->setCellValue("B$nextRow", date("H:i:s:u"));
+        $sheet->setCellValue("C$nextRow", $_POST["name"]);
+        $sheet->setCellValue("D$nextRow", $_POST["area"]);
+        $sheet->setCellValue("E$nextRow", $_POST["symptoms"]);
+        $sheet->setCellValue("F$nextRow", $_POST["fever"]);
+        $sheet->setCellValue("G$nextRow", $_POST["gasp"]);
+        foreach ($firstFormExtra as $symptom) {
+            $value = $sheet->getCell("H$nextRow")->getValue();
+            if ($value == null) {
+                $sheet->setCellValue("H$nextRow", $symptom);
+            } else {
+                $sheet->setCellValue("H$nextRow", $value.", ".$symptom);
+            }
+        }
+    
+        $sheet->getStyle("K$nextRow")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB("00FF00");  
+
+        $writer = new Xlsx($spreadsheet);
+    
+        $caught = false;
+        try {
+            $writer->save("registros.xlsx");
+        } catch (Exception $e) {
+            $caught = true;
+            echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+            header("Refresh:0");
+        }
+
+        if (!$caught) {
+            session_start();       
+            $_SESSION["name"] = $_POST["name"];
+            $_SESSION["area"] = ucfirst($_POST["area"]);
+            $_SESSION["date"] = date("d/m/Y\, H:i");
+            header("Location: liberado.php");
+            exit();
+        }
+    
     } else { # Se o colaborador não estiver saudável
+        session_start();   
+        $_SESSION["name"] = $_POST["name"];  
+        $_SESSION["area"] = $_POST["area"] ;
+        $_SESSION["symptoms"] = $_POST["symptoms"];
+        $_SESSION["fever"] = $_POST["fever"];
+        $_SESSION["gasp"] = $_POST["gasp"];
+        $_SESSION["firstFormExtra"] = $firstFormExtra; 
         header("Location: formContinuacao.php");
         exit();
     }
