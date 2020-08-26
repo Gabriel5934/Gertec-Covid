@@ -6,7 +6,7 @@ if (isset($_SESSION["name"])) {
     $name = $_SESSION["name"];
     $area = $_SESSION["area"];
     $date = $_SESSION["date"];
-    $message = "<h1 id='associate'>$name, $area, $date</h1>";
+    $message = "<h1 id='associate'>$name,".preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area) .", $date</h1>";
 } else {
     header("Location: gertecCovid.php");
 }

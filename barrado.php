@@ -4,6 +4,9 @@ session_start();
 if (!isset($_SESSION["time"])) {
     header("Refresh:0");
     header("Location: gertecCovid.php");
+} else {
+    $name = $_SESSION["name"];
+    $area = $_SESSION["area"];
 }
 
 ?>
@@ -27,13 +30,12 @@ if (!isset($_SESSION["time"])) {
             <div id='negativaMessage'>
                 <img id='alert' src='assets/media/alert.png'>
                 <h3 class='negativeText'>
-                Baseado nas suas respostas, você pode ter sido exposto ao coronavírus (COVID-19) e necessita de cuidados especiais. 
-                Recomendamos que procure atendimento com seu médico de confiança ou vá para uma unidade de saúde. Sobre os cuidados 
-                no atendimento hospitalar. Use uma máscara e cubra a boca quando tossir ou espirrar; Não cubra a boca e nariz com a 
-                mão, use um lenço de papel ou braço; Tente evitar metrô, ônibus e outros transportes públicos, e lugares lotados; 
-                Veículos devem ser desinfetados; Informe os médicos sobre seu histórico de saúde; Após a visita ao pronto-socorro, 
-                caso não haja internação volte para casa o mais rápido possível.
-                Equipe de Saúde e Segurança do Trabalho - GERTEC
+                    Baseado em suas respostas, por precaução você deverá permanecer em home office e acionar a área 
+                    de RH imediatamente por Telefone ou WhatsApp: (11)98247–5717 e/ou (11)98177–3519.
+                </h3>
+                <br><?php echo"<h3 class='negativeText'>$name, $area</h3>" ?><br>
+                <h3 class='negativeText'>
+                    Recomendamos que procure atendimento médico o mais breve possível para realização do diagnóstico.
                 </h3>
             </div>
         </div>

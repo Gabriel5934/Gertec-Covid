@@ -13,10 +13,15 @@ body {
     text-align: center;
 }
 
+#logo {
+    width: 200px; height: auto;
+    padding-top: 30px;
+}
+
 form {
     width: 45.87%; height: auto;
     display: inline-block;
-    margin: 150px 0 150px 0;
+    margin: 50px 0 150px 0;
     padding-bottom: 30px;
     border: 0px solid transparent;
     border-radius: 10px;

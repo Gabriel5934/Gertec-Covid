@@ -13,6 +13,11 @@ body {
     text-align: center;
 }
 
+#logo {
+    width: 200px; height: auto;
+    padding-top: 30px;
+}
+
 form {
     width: 45.87%; height: auto;
     display: inline-block;
