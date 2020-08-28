@@ -168,6 +168,13 @@ if (!empty($_POST)) {
     $currentTime = date("H:i");
     $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
     $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
+    sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["RH_3"]); 
+
+    # Para o RH
+    $currentDate = date("d/m/Y");
+    $currentTime = date("H:i");
+    $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
+    $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
     sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["SST"]); 
 
     if (!$caught) {
