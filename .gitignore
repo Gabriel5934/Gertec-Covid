@@ -3,3 +3,4 @@ vendor/
 *.lock
 *.xlsx
 .env
+api/

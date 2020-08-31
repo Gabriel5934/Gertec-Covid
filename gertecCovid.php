@@ -66,7 +66,7 @@ if (!empty($_POST)) {
 
     $currentTime =  date("d/m/Y \às H:i");
 
-    if ($_POST["name"] == $_ENV["RH_1"] || $_POST["name"] == $_ENV["RH_2"]) { # se o nome for um email do RH
+    if ($_POST["name"] == $_ENV["RH_1"] || $_POST["name"] == $_ENV["RH_2"] || $_POST["name"] == $_ENV["RH_3"]) { # se o nome for um email do RH
         $serverId = $_ENV["SERVER_ID"];
         $injectionApiKey = $_ENV["API_KEY"];
 
