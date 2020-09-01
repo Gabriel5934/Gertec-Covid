@@ -41,7 +41,28 @@ $setores = array(
     "Suporte Tecnico",
     "Segurança & Arquitetura",
     "Sistemas",
-    "Tecnologia Da Informacao - TI"
+    "Tecnologia Da Informacao - TI",
+
+    "Servicos Gerais - Ilhéus",
+    "Administracao -  Ilhéus",
+    "Fiscal",
+    "Contabil",
+    "Pcp - Ilhéus",
+    "Processo Fabril-  Ilhéus",
+    "Qualidade - Ilhéus",
+    "Estoque - Ilhéus",
+    "Desenvolvimento E Qualidade",
+    "Estoque - Manaus",
+    "Processo Fabril - Manaus",
+    "Pcp - Manaus",
+    "Administrativo - Diadema",
+    "Servicos Gerais - Diadema",
+    "Laboratorio",
+    "Administrativo Laboratorio",
+    "Projetos On Site",
+    "Estoque - Diadema",
+    "Venda Direta",
+    "Depto Tecnico - Diadema"
 );
 
 if (!empty($_POST)) {
@@ -161,7 +182,7 @@ if (!empty($_POST)) {
             <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
             <p>
                 Antes de sair de casa faça sua autoavaliação e se dirija ao escritório de forma consciente e segura se estiver liberado.
-                O objetivo da anamnese é mitigar o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
+                O objetivo da análise é mitigar o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
                 bem como de seus familiares. Porem, é sua responsabilidade examinar-se diariamente e responder o questionário assertivamente. 
                 <br>#juntosSomosMaisFortes
 

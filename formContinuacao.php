@@ -73,7 +73,29 @@ $emailsGestores = array(
     $setores[24] => "welton.balani@gertec.com.br",
     $setores[25] => "welton.balani@gertec.com.br",
     $setores[26] => "welton.balani@gertec.com.br",
-    $setores[27] => "welton.balani@gertec.com.br"
+    $setores[27] => "welton.balani@gertec.com.br",
+
+    $setores[28] => "claudia.farias@gertec.com.br",
+    $setores[29] => "claudia.farias@gertec.com.br",
+    $setores[30] => "jessika.frizo@gertec.com.br",
+    $setores[31] => "raonni.fonseca@gertec.com.br",
+    $setores[32] => "eduardo.freitas@gertec.com.br",
+    $setores[33] => "eduardo.freitas@gertec.com.br",
+    $setores[34] => "bruno.oliveira@gertec.com.br",
+    $setores[35] => "kelson.souza@gertec.com.br",
+    $setores[36] => "everton.costa@gertec.com.br",
+    $setores[37] => "raimundo.andrade@gertec.com.br",
+    $setores[38] => "luiz.caton@gertec.com.br",
+    $setores[39] => "luiz.caton@gertec.com.br",
+    $setores[40] => "robson.balog@gertec.com.br",
+    $setores[41] => "robson.balog@gertec.com.br",
+    $setores[42] => "welison.paiva@gertec.com.br",
+    $setores[43] => "leticia.gomes@gertec.com.br",
+    $setores[44] => "robson.balog@gertec.com.br",
+    $setores[45] => "joao.oliveira@gertec.com.br",
+    $setores[46] => "robson.balog@gertec.com.br",
+    $setores[47] => "welison.paiva@gertec.com.br"
+
 );
 
 if (!empty($_POST)) {
