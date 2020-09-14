@@ -42,7 +42,27 @@ $setores = array(
     "Suporte Tecnico",
     "Segurança & Arquitetura",
     "Sistemas",
-    "Tecnologia Da Informacao - TI"
+    "Tecnologia Da Informacao - TI",
+    "Servicos Gerais - Ilhéus",
+    "Administracao -  Ilhéus",
+    "Fiscal",
+    "Contabil",
+    "Pcp - Ilhéus",
+    "Processo Fabril-  Ilhéus",
+    "Qualidade - Ilhéus",
+    "Estoque - Ilhéus",
+    "Desenvolvimento E Qualidade",
+    "Estoque - Manaus",
+    "Processo Fabril - Manaus",
+    "Pcp - Manaus",
+    "Administrativo - Diadema",
+    "Servicos Gerais - Diadema",
+    "Laboratorio",
+    "Administrativo Laboratorio",
+    "Projetos On Site",
+    "Estoque - Diadema",
+    "Venda Direta",
+    "Depto Tecnico - Diadema"
 );
 
 $emailsGestores = array(
@@ -74,7 +94,6 @@ $emailsGestores = array(
     $setores[25] => "welton.balani@gertec.com.br",
     $setores[26] => "welton.balani@gertec.com.br",
     $setores[27] => "welton.balani@gertec.com.br",
-
     $setores[28] => "claudia.farias@gertec.com.br",
     $setores[29] => "claudia.farias@gertec.com.br",
     $setores[30] => "jessika.frizo@gertec.com.br",
@@ -95,7 +114,6 @@ $emailsGestores = array(
     $setores[45] => "joao.oliveira@gertec.com.br",
     $setores[46] => "robson.balog@gertec.com.br",
     $setores[47] => "welison.paiva@gertec.com.br"
-
 );
 
 if (!empty($_POST)) {

@@ -42,7 +42,6 @@ $setores = array(
     "Segurança & Arquitetura",
     "Sistemas",
     "Tecnologia Da Informacao - TI",
-
     "Servicos Gerais - Ilhéus",
     "Administracao -  Ilhéus",
     "Fiscal",
@@ -108,7 +107,14 @@ if (!empty($_POST)) {
         
         $response = $client->send($message);
     } elseif (isset($_POST["noneAbove"])) { # Se o colaborador estiver saudável
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
+        try {
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
+        } catch (Exception $e) {
+            if ($e->getMessage() == 'File "registros.xlsx" does not exist.') {
+                echo("kd a planilha");
+            }
+        }
+        
         $sheet = $spreadsheet->getActiveSheet();
         $highestRow = $sheet->getHighestDataRow();
         $nextRow = $highestRow + 1;
@@ -181,9 +187,10 @@ if (!empty($_POST)) {
             <img id="logo" src="assets/media/logo.png">
             <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
             <p>
-                Antes de sair de casa faça sua autoavaliação e se dirija ao escritório de forma consciente e segura se estiver liberado.
-                O objetivo da análise é mitigar o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
-                bem como de seus familiares. Porem, é sua responsabilidade examinar-se diariamente e responder o questionário assertivamente. 
+                Faça sua autoavaliação diariamente de forma consciente. O objetivo da análise é mitigar 
+                o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
+                bem como de seus familiares. Porém, é sua responsabilidade examinar-se diariamente 
+                e responder o questionário assertivamente.
                 <br>#juntosSomosMaisFortes
 
             </p>
