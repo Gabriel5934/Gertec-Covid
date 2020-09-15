@@ -93,7 +93,7 @@ if (!empty($_POST)) {
         $username = $_ENV["USERNAME"];
         $password = $_ENV["PASSWORD"];
         
-        $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 1 OR data_registro = CURDATE() ORDER BY data_registro ASC";
+        $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 1 OR data_registro = CURDATE() ORDER BY id_registro";
         
         try {
             $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
