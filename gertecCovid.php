@@ -87,8 +87,84 @@ if (!empty($_POST)) {
     $currentTime =  date("d/m/Y H:i");
 
     if ($_POST["name"] == $_ENV["RH_1"] || $_POST["name"] == $_ENV["RH_2"] || $_POST["name"] == $_ENV["RH_3"] || $_POST["name"] == $_ENV["EXTRA"] || $_POST["name"] == $_ENV["TESTING"]) { # se o nome for um email do RH
-        echo "<script>alert('O sistema de envio de planilhas está temporariamente fora do ar')</script>";
-        header("Refresh:0");
+        # Encapsulando credenciais da database
+        $host = $_ENV["HOST"];
+        $dbname = $_ENV["DBNAME"];
+        $username = $_ENV["USERNAME"];
+        $password = $_ENV["PASSWORD"];
+        
+        $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 1 OR data_registro = CURDATE() ORDER BY data_registro ASC";
+        
+        try {
+            $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
+            // echo "Connected to $dbname at $host successfully."; // DEBUG
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Setando o erro mode do PDO
+            $data = $conn->query($retrieveData);
+            // echo "New record created successfully"; // DEBUG
+        } catch(PDOException $e) {
+            // echo $sql . "<br>" . $e->getMessage(); // DEBUG
+            echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+            $caught = true;
+            // header("Refresh:0");
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $aux = 2;
+        $oneStyle = [
+            'font' => [
+                'bold' => true,
+            ]
+        ];
+
+        $sheet->setCellValue("B1", "Data");
+        $sheet->setCellValue("C1", "Hora");
+        $sheet->setCellValue("D1", "Nome");
+        $sheet->setCellValue("E1", "Área");
+        $sheet->setCellValue("F1", "Contato com contaminado");
+        $sheet->setCellValue("G1", "Contato com agente da saúde");
+        $sheet->setCellValue("H1", "Sintomas");
+        $sheet->setCellValue("I1", "Tempo dos sintomas");
+
+        $columns = array("B", "C", "D", "E", "F", "G", "H", "I");
+        foreach ($columns as $column){
+            $spreadsheet->getActiveSheet()->getStyle($column."1")->applyFromArray($oneStyle);
+        }
+
+        $spreadsheet->getActiveSheet()->getColumnDimension("B")->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension("C")->setWidth(12);
+        $spreadsheet->getActiveSheet()->getColumnDimension("D")->setWidth(50);
+        $spreadsheet->getActiveSheet()->getColumnDimension("E")->setWidth(50);
+        $spreadsheet->getActiveSheet()->getColumnDimension("F")->setWidth(24);
+        $spreadsheet->getActiveSheet()->getColumnDimension("G")->setWidth(27);
+        $spreadsheet->getActiveSheet()->getColumnDimension("H")->setWidth(50);
+        $spreadsheet->getActiveSheet()->getColumnDimension("I")->setWidth(30);
+
+        foreach ($data as $row) {
+            $aStyle = [
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'rotation' => 90,
+                    'startColor' => [
+                        'argb' => $row["color"],
+                    ]
+                ]
+            ];
+            $spreadsheet->getActiveSheet()->getStyle("A$aux")->applyFromArray($aStyle);
+            $sheet->setCellValue("B$aux", $row["data_registro"]);
+            $sheet->setCellValue("C$aux", $row["hora_registro"]);
+            $sheet->setCellValue("D$aux", $row["colaborador_nome"]);
+            $sheet->setCellValue("E$aux", $row["colaborador_area"]);
+            $sheet->setCellValue("F$aux", $row["contato_contaminado"]);
+            $sheet->setCellValue("G$aux", $row["contato_agente"]);
+            $sheet->setCellValue("H$aux", $row["sintomas"]);
+            $sheet->setCellValue("I$aux", $row["tempo_sintomas"]);
+            $aux++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('registro_de_entrada.xlsx');
     } elseif (isset($_POST["noneAbove"])) { # Se o colaborador estiver saudável
         # Variaveis para o query 
         $color = "32CD32";
@@ -134,7 +210,8 @@ if (!empty($_POST)) {
 
         # Criando query para o MySQL
         $sql = "INSERT INTO condicao_de_saude (
-                    color, data_registro, 
+                    color, 
+                    data_registro, 
                     hora_registro, 
                     colaborador_nome, 
                     colaborador_area, 
@@ -171,7 +248,7 @@ if (!empty($_POST)) {
             // echo $sql . "<br>" . $e->getMessage(); // DEBUG
             echo  "<script>alert('Algo deu errado, tente novamente');</script>";
             $caught = true;
-            header("Refresh:0");
+            // header("Refresh:0");
         }
 
         $conn = null;

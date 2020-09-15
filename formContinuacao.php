@@ -130,7 +130,7 @@ if (!empty($_POST)) {
     $_SESSION["area"] = preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area);
 
     # Variaveis para o query 
-    $color = "25500";
+    $color = "BA1818";
     $areaForDB = preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area);
     $time = $_POST["time"];
     $symptoms = implode(', ', $symptoms);
@@ -172,7 +172,8 @@ if (!empty($_POST)) {
 
     # Criando query para o MySQL
     $sql = "INSERT INTO condicao_de_saude (
-                color, data_registro, 
+                color, 
+                data_registro, 
                 hora_registro, 
                 colaborador_nome, 
                 colaborador_area, 
@@ -219,41 +220,41 @@ if (!empty($_POST)) {
 
     $conn = null;
 
-    # Variáveis de ambas as mensagens.
-    $currentDate = date("d/m/Y");
-    $currentTime = date("H:i");
+    // # Variáveis de ambas as mensagens.
+    // $currentDate = date("d/m/Y");
+    // $currentTime = date("H:i");
 
-    # Monstando a mensagem para o Gestor 
-    $textMessage = "Prezado Gestor,<br>Seu colaborador, $name, respondeu o formulário de saúde na 
-    data de hoje, $currentDate, às $currentTime, apresentando riscos a saúde e de contaminação. Por favor pedimos 
-    para imediatamente procurá-lo e conversar com o RH.";
+    // # Monstando a mensagem para o Gestor 
+    // $textMessage = "Prezado Gestor,<br>Seu colaborador, $name, respondeu o formulário de saúde na 
+    // data de hoje, $currentDate, às $currentTime, apresentando riscos a saúde e de contaminação. Por favor pedimos 
+    // para imediatamente procurá-lo e conversar com o RH.";
 
-    # Disparando a mensagem para o Gestor
-    $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
-    $message = new BasicMessage(); 
-    $message->subject = "Alerta de suspeita de COVID";
-    $message->htmlBody = "<html>$textMessage</html>";
-    $message->plainTextBody = "$textMessage";
-    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-    $message->addToAddress($emailsGestores[$area]);
-    $response = $client->send($message);
+    // # Disparando a mensagem para o Gestor
+    // $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
+    // $message = new BasicMessage(); 
+    // $message->subject = "Alerta de suspeita de COVID";
+    // $message->htmlBody = "<html>$textMessage</html>";
+    // $message->plainTextBody = "$textMessage";
+    // $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    // $message->addToAddress($emailsGestores[$area]);
+    // $response = $client->send($message);
 
-    # Monstando a mensagem para o RH
-    $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
-    $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
+    // # Monstando a mensagem para o RH
+    // $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
+    // $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
 
-    # Disparando a mensagem para o RH
-    $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
-    $message = new BasicMessage(); 
-    $message->subject = "Alerta de suspeita de COVID";
-    $message->htmlBody = "<html>$textMessage</html>";
-    $message->plainTextBody = "$textMessage";
-    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-    $message->addToAddress($_ENV["RH_1"]);
-    $message->addCcAddress($_ENV["RH_2"]);
-    $message->addCcAddress($_ENV["RH_3"]);
-    $message->addCcAddress($_ENV["SST"]);
-    $response = $client->send($message);
+    // # Disparando a mensagem para o RH
+    // $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
+    // $message = new BasicMessage(); 
+    // $message->subject = "Alerta de suspeita de COVID";
+    // $message->htmlBody = "<html>$textMessage</html>";
+    // $message->plainTextBody = "$textMessage";
+    // $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    // $message->addToAddress($_ENV["RH_1"]);
+    // $message->addCcAddress($_ENV["RH_2"]);
+    // $message->addCcAddress($_ENV["RH_3"]);
+    // $message->addCcAddress($_ENV["SST"]);
+    // $response = $client->send($message);
 
     if (!$caught) {
         header("Location: barrado.php");
