@@ -33,7 +33,7 @@ if (isset($_SESSION["name"])) {
                 <img id='check' src='assets/media/check.png'>
                 <h3 class='positiveText'>Baseado nas suas respostas, você está liberado(a) para trabalhar</h3>
                 <?php echo($message) ?>
-                <h3 class='positiveText'>A apresentação deste cartão e obrigatória para sua entrada na Gertec</h3>
+                <h3 class='positiveText'>A apresentação deste cartão é obrigatória para sua entrada na Gertec</h3>
             </div>
         </div>
     </body>

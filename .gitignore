@@ -4,3 +4,4 @@ vendor/
 *.xlsx
 .env
 api/
+Planilhas Antigas/

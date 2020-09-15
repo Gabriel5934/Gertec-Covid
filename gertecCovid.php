@@ -84,65 +84,94 @@ if (!empty($_POST)) {
         }
     }
 
-    $currentTime =  date("d/m/Y \às H:i");
+    $currentTime =  date("d/m/Y H:i");
 
-    if ($_POST["name"] == $_ENV["RH_1"] || $_POST["name"] == $_ENV["RH_2"] || $_POST["name"] == $_ENV["RH_3"]) { # se o nome for um email do RH
-        $serverId = $_ENV["SERVER_ID"];
-        $injectionApiKey = $_ENV["API_KEY"];
-
-        $client = new SocketLabsClient($serverId, $injectionApiKey);
-        
-        $message = new BasicMessage(); 
-
-        $message->subject = "Registro de entrada de colaboradores";
-        $message->htmlBody = "<html>Planilha com o registro de entrada de funcionários até $currentTime</html>";
-        $message->plainTextBody = "Planilha com o registro de entrada de funcionários até $currentTime";
-
-        $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-
-        $att = \Socketlabs\Message\Attachment::createFromPath("registros.xlsx");
-        $message->attachments[] = $att;
-
-        $message->addToAddress($_POST["name"]);
-        
-        $response = $client->send($message);
+    if ($_POST["name"] == $_ENV["RH_1"] || $_POST["name"] == $_ENV["RH_2"] || $_POST["name"] == $_ENV["RH_3"] || $_POST["name"] == $_ENV["EXTRA"] || $_POST["name"] == $_ENV["TESTING"]) { # se o nome for um email do RH
+        echo "<script>alert('O sistema de envio de planilhas está temporariamente fora do ar')</script>";
+        header("Refresh:0");
     } elseif (isset($_POST["noneAbove"])) { # Se o colaborador estiver saudável
-        try {
-            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
-        } catch (Exception $e) {
-            if ($e->getMessage() == 'File "registros.xlsx" does not exist.') {
-                echo("kd a planilha");
-            }
-        }
-        
-        $sheet = $spreadsheet->getActiveSheet();
-        $highestRow = $sheet->getHighestDataRow();
-        $nextRow = $highestRow + 1;
-    
-        # Fazendo backup
-        if ($highestRow % 100 == 0){
-            $nameDate = date("d\_m\_H\-i");
-            copy("registros.xlsx", "backup_$nameDate.xlsx");
-        }
+        # Variaveis para o query 
+        $color = "32CD32";
+        $name = $_POST["name"];
+        $area = preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $_POST["area"]);
+        $contact = $_POST["contact"];
+        $doctor = $_POST["doctor"];
 
-        $sheet->getStyle("A$nextRow")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB("32CD32");  
-        $sheet->setCellValue("B$nextRow", date("d/m/Y"));
-        $sheet->setCellValue("C$nextRow", date("H:i:s"));
-        $sheet->setCellValue("D$nextRow", $_POST["name"]);
-        $sheet->setCellValue("E$nextRow", preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $_POST["area"]));
-        $sheet->setCellValue("F$nextRow", $_POST["contact"]);
-        $sheet->setCellValue("G$nextRow", $_POST["doctor"]);
+        $map = array(
+            'á' => 'a',
+            'à' => 'a',
+            'ã' => 'a',
+            'â' => 'a',
+            'é' => 'e',
+            'ê' => 'e',
+            'í' => 'i',
+            'ó' => 'o',
+            'ô' => 'o',
+            'õ' => 'o',
+            'ú' => 'u',
+            'ü' => 'u',
+            'ç' => 'c',
+            'Á' => 'A',
+            'À' => 'A',
+            'Ã' => 'A',
+            'Â' => 'A',
+            'É' => 'E',
+            'Ê' => 'E',
+            'Í' => 'I',
+            'Ó' => 'O',
+            'Ô' => 'O',
+            'Õ' => 'O',
+            'Ú' => 'U',
+            'Ü' => 'U',
+            'Ç' => 'C'
+        );
+         
+        $name = strtr($name, $map);
+        $area = strtr($area, $map);
 
-        $writer = new Xlsx($spreadsheet);
-    
-        $caught = false;
+        # Criando query para o MySQL
+        $sql = "INSERT INTO condicao_de_saude (
+                    color, data_registro, 
+                    hora_registro, 
+                    colaborador_nome, 
+                    colaborador_area, 
+                    contato_contaminado, 
+                    contato_agente, 
+                    sintomas, 
+                    tempo_sintomas
+                )
+                VALUES (
+                    '$color', 
+                    CURDATE(), 
+                    CURTIME(), 
+                    '$name', 
+                    '$area', 
+                    '$contact', 
+                    '$doctor', 
+                    'Null', 
+                    'Null'
+                )";
+
+        # Encapsulando credenciais da database
+        $host = $_ENV["HOST"];
+        $dbname = $_ENV["DBNAME"];
+        $username = $_ENV["USERNAME"];
+        $password = $_ENV["PASSWORD"];
+
         try {
-            $writer->save("registros.xlsx");
-        } catch (Exception $e) {
-            $caught = true;
+            $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
+            // echo "Connected to $dbname at $host successfully."; // DEBUG
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Setando o erro mode do PDO
+            $conn->exec($sql); // Executando o query
+            // echo "New record created successfully"; // DEBUG
+        } catch(PDOException $e) {
+            // echo $sql . "<br>" . $e->getMessage(); // DEBUG
             echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+            $caught = true;
             header("Refresh:0");
         }
+
+        $conn = null;
 
         if (!$caught) {
             session_start();       
@@ -154,11 +183,6 @@ if (!empty($_POST)) {
             exit();
         }
     } else { # Se o colaborador não estiver saudável
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
-        $sheet = $spreadsheet->getActiveSheet();
-        $highestRow = $sheet->getHighestDataRow();
-        $nextRow = $highestRow + 1;
-
         session_start();   
         $_SESSION["name"] = $_POST["name"];  
         $_SESSION["area"] = $_POST["area"] ;
@@ -205,9 +229,6 @@ if (!empty($_POST)) {
                     <select id="area" name="area" required>
                         <?php 
                             foreach ($setores as $setor) {
-                                echo '<script>';
-                                echo 'console.log('. json_encode( "Hello World" ) .')';
-                                echo '</script>';
                                 echo("<option value='$setor'>$setor</option>");
                             }
                         ?>

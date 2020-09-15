@@ -114,6 +114,7 @@ $emailsGestores = array(
     $setores[45] => "joao.oliveira@gertec.com.br",
     $setores[46] => "robson.balog@gertec.com.br",
     $setores[47] => "welison.paiva@gertec.com.br"
+
 );
 
 if (!empty($_POST)) {
@@ -128,98 +129,129 @@ if (!empty($_POST)) {
     $_SESSION["name"] = $name;
     $_SESSION["area"] = preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area);
 
-    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("registros.xlsx");
-    $sheet = $spreadsheet->getActiveSheet();
-    $highestRow = $sheet->getHighestDataRow();
-    $nextRow = $highestRow + 1;
+    # Variaveis para o query 
+    $color = "25500";
+    $areaForDB = preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area);
+    $time = $_POST["time"];
+    $symptoms = implode(', ', $symptoms);
 
-    $sheet->getStyle("A$nextRow")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB("25500");  
-    $sheet->setCellValue("B$nextRow", date("d/m/Y"));
-    $sheet->setCellValue("C$nextRow", date("H:i:s"));
-    $sheet->setCellValue("D$nextRow", $name);
-    $sheet->setCellValue("E$nextRow", preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area));
-    $sheet->setCellValue("F$nextRow", $contact);
-    $sheet->setCellValue("G$nextRow", $doctor);
-    foreach ($symptoms as $symptom) {
-        $value = $sheet->getCell("H$nextRow")->getValue();
-        if ($value == null) {
-            $sheet->setCellValue("H$nextRow", preg_replace('/(?<!\ )[A-Z]/', ' $0', $symptom));
-        } else {
-            $sheet->setCellValue("H$nextRow", $value.", ".preg_replace('/(?<!\ )[A-Z]/', ' $0', $symptom));
-        }
-    }
-    $sheet->setCellValue("I$nextRow", $_POST["time"]);
+    $map = array(
+        'á' => 'a',
+        'à' => 'a',
+        'ã' => 'a',
+        'â' => 'a',
+        'é' => 'e',
+        'ê' => 'e',
+        'í' => 'i',
+        'ó' => 'o',
+        'ô' => 'o',
+        'õ' => 'o',
+        'ú' => 'u',
+        'ü' => 'u',
+        'ç' => 'c',
+        'Á' => 'A',
+        'À' => 'A',
+        'Ã' => 'A',
+        'Â' => 'A',
+        'É' => 'E',
+        'Ê' => 'E',
+        'Í' => 'I',
+        'Ó' => 'O',
+        'Ô' => 'O',
+        'Õ' => 'O',
+        'Ú' => 'U',
+        'Ü' => 'U',
+        'Ç' => 'C'
+    );
+     
+    $name = strtr($name, $map);
+    $areaForDB = strtr($areaForDB, $map); 
 
-    $writer = new Xlsx($spreadsheet);
+    # Criando query para o MySQL
+    $sql = "INSERT INTO condicao_de_saude (
+                color, data_registro, 
+                hora_registro, 
+                colaborador_nome, 
+                colaborador_area, 
+                contato_contaminado, 
+                contato_agente, 
+                sintomas, 
+                tempo_sintomas
+            )
+            VALUES (
+                '$color', 
+                CURDATE(), 
+                CURTIME(), 
+                '$name', 
+                '$areaForDB', 
+                '$contact', 
+                '$doctor', 
+                '$symptoms', 
+                '$time'
+            )";
 
-    $caught = false;
+    # Encapsulando credenciais da database
+    $host = $_ENV["HOST"];
+    $dbname = $_ENV["DBNAME"];
+    $username = $_ENV["USERNAME"];
+    $password = $_ENV["PASSWORD"];
+
     try {
-        $writer->save("registros.xlsx");
-    } catch (Exception $e) {
-        $caught = true;
+        $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
+        // echo "Connected to $dbname at $host successfully."; // DEBUG
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Setando o erro mode do PDO
+        $conn->exec($sql); // Executando o query
+        // echo "New record created successfully"; // DEBUG
+    } catch(PDOException $e) {
+        // echo $sql . "<br>" . $e->getMessage(); // DEBUG
         echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+        $caught = true;
         header("Refresh:0");
-    }   
-
-    # Disparando e-mails
-    function sendEmail($subject, $textMessage, $recipient) {
-        $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
-        $message = new BasicMessage(); 
-        $message->subject = $subject;
-        $message->htmlBody = "<html>$textMessage</html>";
-        $message->plainTextBody = "$textMessage";
-        $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
-        $message->addToAddress($recipient);
-        $response = $client->send($message);
     }
 
-    # Fazendo backup
-    if ($nextRow % 100 == 0) {
-        $nameDate = date("d\_m\_H\-i");
-        copy("registros.xlsx", "backup_$nameDate.xlsx");
-    }
+    $conn = null;
 
-    # Para o gestor
+    # Variáveis de ambas as mensagens.
     $currentDate = date("d/m/Y");
     $currentTime = date("H:i");
-    $formatedArea = substr(preg_replace('/(?<!\ )[A-Z, &]/', ' $0', $area), 1);
-    $areaEmail = $emailsGestores[$area];
+
+    # Monstando a mensagem para o Gestor 
     $textMessage = "Prezado Gestor,<br>Seu colaborador, $name, respondeu o formulário de saúde na 
     data de hoje, $currentDate, às $currentTime, apresentando riscos a saúde e de contaminação. Por favor pedimos 
     para imediatamente procurá-lo e conversar com o RH.";
-    sendEmail("Alerta de suspeita de COVID", $textMessage, $areaEmail); 
 
-    # Para o RH
-    $currentDate = date("d/m/Y");
-    $currentTime = date("H:i");
+    # Disparando a mensagem para o Gestor
+    $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
+    $message = new BasicMessage(); 
+    $message->subject = "Alerta de suspeita de COVID";
+    $message->htmlBody = "<html>$textMessage</html>";
+    $message->plainTextBody = "$textMessage";
+    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    $message->addToAddress($emailsGestores[$area]);
+    $response = $client->send($message);
+
+    # Monstando a mensagem para o RH
     $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
     $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
-    sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["RH_1"]); 
 
-    # Para o RH
-    $currentDate = date("d/m/Y");
-    $currentTime = date("H:i");
-    $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
-    $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
-    sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["RH_2"]); 
+    # Disparando a mensagem para o RH
+    $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
+    $message = new BasicMessage(); 
+    $message->subject = "Alerta de suspeita de COVID";
+    $message->htmlBody = "<html>$textMessage</html>";
+    $message->plainTextBody = "$textMessage";
+    $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+    $message->addToAddress($_ENV["RH_1"]);
+    $message->addCcAddress($_ENV["RH_2"]);
+    $message->addCcAddress($_ENV["RH_3"]);
+    $message->addCcAddress($_ENV["SST"]);
+    $response = $client->send($message);
 
-    # Para o RH
-    $currentDate = date("d/m/Y");
-    $currentTime = date("H:i");
-    $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
-    $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
-    sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["RH_3"]); 
-
-    # Para o RH
-    $currentDate = date("d/m/Y");
-    $currentTime = date("H:i");
-    $textMessage = "Informamos que o colaborador, $name, preencheu o formulário na data de hoje 
-    $currentDate, às $currentTime, e respondeu que apresenta os sintomas da COVID-19.";
-    sendEmail("Alerta de suspeita de COVID", $textMessage, $_ENV["SST"]); 
-
-    if (!$caught) {
+    if (!$caught and isset($symptoms)) {
         header("Location: barrado.php");
         exit();
+    } else if (!isset($symptoms)) {
+        header("Location: gertecCovid.php");
     }
 }
 ?>

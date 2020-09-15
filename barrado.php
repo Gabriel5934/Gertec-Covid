@@ -30,12 +30,18 @@ if (!isset($_SESSION["time"])) {
             <div id='negativaMessage'>
                 <img id='alert' src='assets/media/alert.png'>
                 <h3 class='negativeText'>
-                    Baseado em suas respostas, por precaução você deverá permanecer em home office e acionar a área 
-                    de RH imediatamente por Telefone ou WhatsApp: (11)98247–5717 e/ou (11)98177–3519.
+                    Baseado em suas respostas, por precaução você deverá permanecer em casa. Acione o RH de sua unidade imediatamente por telefone ou WhatsApp.<br>
+                    <br><strong>São Paulo e Diadema</strong><br>
+                    (11) 99402-4508<br>
+                    (11) 98177-3519<br>
+                    <strong>Ilhéus</strong><br>
+                    (73) 9136-4746<br>
+                    <strong>Manaus</strong><br>
+                    (92) 98418-3098<br>
                 </h3>
                 <br><?php echo"<h3 class='negativeText'>$name, $area</h3>" ?><br>
                 <h3 class='negativeText'>
-                    Recomendamos que procure atendimento médico o mais breve possível para realização do diagnóstico.
+                    Recomendamos que procure atendimento médico o mais breve possível para realização do diagnóstico. 
                 </h3>
             </div>
         </div>
