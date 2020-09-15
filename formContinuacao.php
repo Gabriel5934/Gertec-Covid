@@ -167,6 +167,9 @@ if (!empty($_POST)) {
     $name = strtr($name, $map);
     $areaForDB = strtr($areaForDB, $map); 
 
+    $contact = (int)$contact;
+    $doctor = (int)$doctor;
+
     # Criando query para o MySQL
     $sql = "INSERT INTO condicao_de_saude (
                 color, data_registro, 
@@ -196,17 +199,22 @@ if (!empty($_POST)) {
     $username = $_ENV["USERNAME"];
     $password = $_ENV["PASSWORD"];
 
-    try {
-        $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
-        // echo "Connected to $dbname at $host successfully."; // DEBUG
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Setando o erro mode do PDO
-        $conn->exec($sql); // Executando o query
-        // echo "New record created successfully"; // DEBUG
-    } catch(PDOException $e) {
-        // echo $sql . "<br>" . $e->getMessage(); // DEBUG
-        echo  "<script>alert('Algo deu errado, tente novamente');</script>";
-        $caught = true;
-        header("Refresh:0");
+    if (!isset($symptoms)) {
+        header("Location: gertecCovid.php");
+        exit();
+    } else {
+        try {
+            $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
+            // echo "Connected to $dbname at $host successfully."; // DEBUG
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Setando o erro mode do PDO
+            $conn->exec($sql); // Executando o query
+            // echo "New record created successfully"; // DEBUG
+        } catch(PDOException $e) {
+            // echo $sql . "<br>" . $e->getMessage(); // DEBUG
+            echo  "<script>alert('Algo deu errado, tente novamente');</script>";
+            $caught = true;
+            header("Location: gertecCovid.php");
+        }
     }
 
     $conn = null;
@@ -247,12 +255,10 @@ if (!empty($_POST)) {
     $message->addCcAddress($_ENV["SST"]);
     $response = $client->send($message);
 
-    if (!$caught and isset($symptoms)) {
+    if (!$caught) {
         header("Location: barrado.php");
         exit();
-    } else if (!isset($symptoms)) {
-        header("Location: gertecCovid.php");
-    }
+    } 
 }
 ?>
 

@@ -129,6 +129,9 @@ if (!empty($_POST)) {
         $name = strtr($name, $map);
         $area = strtr($area, $map);
 
+        $contact = (int)$contact;
+        $doctor = (int)$doctor;
+
         # Criando query para o MySQL
         $sql = "INSERT INTO condicao_de_saude (
                     color, data_registro, 
@@ -236,16 +239,16 @@ if (!empty($_POST)) {
                 </div>
                 <div class="field-container">
                     <h3>Teve contato com alguém contaminado COVID-19?<h3>
-                    <input type="radio" id="withFever" name="contact" value="Sim" required>
+                    <input type="radio" id="withFever" name="contact" value="1" required>
                     <label for="withFever">Sim</label><br>
-                    <input type="radio" id="noFever"name="contact" value="Não">
+                    <input type="radio" id="noFever"name="contact" value="0">
                     <label for="nofever">Não</label><br>
                 </div>
                 <div class="field-container">
                     <h3>Reside com algum agente da saúde (enfermeiro, médico, etc..)?<h3>
-                    <input type="radio" id="withFever" name="doctor" value="Sim" required>
+                    <input type="radio" id="withFever" name="doctor" value="1" required>
                     <label for="withFever">Sim</label><br>
-                    <input type="radio" id="noFever"name="doctor" value="Não">
+                    <input type="radio" id="noFever"name="doctor" value="0">
                     <label for="nofever">Não</label><br>
                 </div>
                 <div class="field-container">
