@@ -105,7 +105,7 @@ if (!empty($_POST)) {
             // echo $sql . "<br>" . $e->getMessage(); // DEBUG
             echo  "<script>alert('Algo deu errado, tente novamente');</script>";
             $caught = true;
-            // header("Refresh:0");
+            header("Refresh:0");
         }
 
         $spreadsheet = new Spreadsheet();
@@ -164,7 +164,22 @@ if (!empty($_POST)) {
         }
 
         $writer = new Xlsx($spreadsheet);
-        $writer->save('registro_de_entrada.xlsx');
+        $writer->save("registro_de_entrada.xlsx");
+
+        # Disparando a mensagem para o Gestor
+        $client = new SocketLabsClient($_ENV["SERVER_ID"], $_ENV["API_KEY"]);
+        $message = new BasicMessage(); 
+        $message->subject = "Planilha de registros de entrada";
+        $message->htmlBody = "<html>Planilha dos registros de entrada de ontem e hoje</html>";
+        $message->plainTextBody = "Planilha dos registros de entrada de ontem e hoje";
+        $message->from = new EmailAddress($_ENV["FROM_EMAIL"]);
+        $message->addToAddress($_POST["name"]);
+        $att = \Socketlabs\Message\Attachment::createFromPath( __DIR__ . "\\registro_de_entrada.xlsx");
+        $message->attachments[] = $att;
+        $response = $client->send($message);
+        echo  "<script>alert('Planilha enviada para seu e-mail');</script>";
+        header("Refresh:0");
+
     } elseif (isset($_POST["noneAbove"])) { # Se o colaborador estiver saudável
         # Variaveis para o query 
         $color = "32CD32";
@@ -248,7 +263,7 @@ if (!empty($_POST)) {
             // echo $sql . "<br>" . $e->getMessage(); // DEBUG
             echo  "<script>alert('Algo deu errado, tente novamente');</script>";
             $caught = true;
-            // header("Refresh:0");
+            header("Refresh:0");
         }
 
         $conn = null;
@@ -278,84 +293,84 @@ if (!empty($_POST)) {
 
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="assets/styles/gertecCovid.css" media="screen" />
-    <script type="text/javascript" src="assets/scripts/gertecCovid.js"></script>
-    <title>Avaliação de Saúde</title>
-</head>
-<body>
-    <div id="content-wrapper">
-        <form id="form" action="" method="post">
-            <img id="logo" src="assets/media/logo.png">
-            <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
-            <p>
-                Faça sua autoavaliação diariamente de forma consciente. O objetivo da análise é mitigar 
-                o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
-                bem como de seus familiares. Porém, é sua responsabilidade examinar-se diariamente 
-                e responder o questionário assertivamente.
-                <br>#juntosSomosMaisFortes
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="assets/styles/gertecCovid.css" media="screen" />
+        <script type="text/javascript" src="assets/scripts/gertecCovid.js"></script>
+        <title>Avaliação de Saúde</title>
+    </head>
+    <body>
+        <div id="content-wrapper">
+            <form id="form" action="" method="post">
+                <img id="logo" src="assets/media/logo.png">
+                <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
+                <p>
+                    Faça sua autoavaliação diariamente de forma consciente. O objetivo da análise é mitigar 
+                    o risco de disseminação da doença entre nossos colaboradores e preservar a sua saúde, 
+                    bem como de seus familiares. Porém, é sua responsabilidade examinar-se diariamente 
+                    e responder o questionário assertivamente.
+                    <br>#juntosSomosMaisFortes
 
-            </p>
+                </p>
 
-            <div id="form-wrapper">
-                <div class="field-container">
-                    <label for="name">Nome:</label>
-                    <input type="text" name="name" required>
+                <div id="form-wrapper">
+                    <div class="field-container">
+                        <label for="name">Nome:</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="field-container">
+                        <label for="area">Área:</label>
+                        <select id="area" name="area" required>
+                            <?php 
+                                foreach ($setores as $setor) {
+                                    echo("<option value='$setor'>$setor</option>");
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="field-container">
+                        <h3>Teve contato com alguém contaminado COVID-19?<h3>
+                        <input type="radio" id="withFever" name="contact" value="1" required>
+                        <label for="withFever">Sim</label><br>
+                        <input type="radio" id="noFever"name="contact" value="0">
+                        <label for="nofever">Não</label><br>
+                    </div>
+                    <div class="field-container">
+                        <h3>Reside com algum agente da saúde (enfermeiro, médico, etc..)?<h3>
+                        <input type="radio" id="withFever" name="doctor" value="1" required>
+                        <label for="withFever">Sim</label><br>
+                        <input type="radio" id="noFever"name="doctor" value="0">
+                        <label for="nofever">Não</label><br>
+                    </div>
+                    <div class="field-container">
+                        <h3>Você apresenta um ou mais dos sintomas abaixo?<h3>
+                        <input onchange="extraSelected('pain')" class="extra" type="checkbox" name="pain" value="DorEDesconforto">
+                        <label for="pain">Dores e desconfortos </label><br>
+                        <input onchange="extraSelected('soreThroat')" class="extra" type="checkbox" name="soreThroat" value="DorDeGarganta">
+                        <label for="soreThroat">Dor de Garganta</label><br>
+                        <input onchange="extraSelected('diarreia')" class="extra" type="checkbox" name="diarreia" value="Diarreia">
+                        <label for="diarreia">Diarréia</label><br>
+                        <input onchange="extraSelected('headache')" class="extra" type="checkbox" name="headache" value="DorDeCabeca">
+                        <label for="headache">Dor de Cabeça</label><br>
+                        <input onchange="extraSelected('tasteless')" class="extra" type="checkbox" name="tasteless" value="PerdaDePaladar">
+                        <label for="tasteless">Diminuição de olfato/paladar</label><br>
+                        <input onchange="extraSelected('congestion')" class="extra" type="checkbox" name="congestion" value="CongestaoNasal">
+                        <label for="congestion">Congestão/Corrimento nasal</label><br>
+                        <input onchange="extraSelected('cough')" class="extra" type="checkbox" name="cough" value="tosse">
+                        <label for="cough">Tosse</label><br>
+                        <input onchange="extraSelected('conjunctivitis')" class="extra" type="checkbox" name="conjunctivitis" value="Conjuntivite">
+                        <label for="conjunctivitis">Conjuntivite</label><br>
+                        <input onchange="extraSelected('tired')" class="extra" type="checkbox" name="tired" value="CansacoOuFaltaDeAr">
+                        <label for="tired">Cansaço ou falta de ar</label><br>
+                        <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="NenhumAcima" checked>
+                        <label for="noneAbove">Estou bem de saúde, não apresento nenhum dos sintomas citados.</label><br>
+                    </div>
+                    <input type="submit" value="ENVIAR">
                 </div>
-                <div class="field-container">
-                    <label for="area">Área:</label>
-                    <select id="area" name="area" required>
-                        <?php 
-                            foreach ($setores as $setor) {
-                                echo("<option value='$setor'>$setor</option>");
-                            }
-                        ?>
-                    </select>
-                </div>
-                <div class="field-container">
-                    <h3>Teve contato com alguém contaminado COVID-19?<h3>
-                    <input type="radio" id="withFever" name="contact" value="1" required>
-                    <label for="withFever">Sim</label><br>
-                    <input type="radio" id="noFever"name="contact" value="0">
-                    <label for="nofever">Não</label><br>
-                </div>
-                <div class="field-container">
-                    <h3>Reside com algum agente da saúde (enfermeiro, médico, etc..)?<h3>
-                    <input type="radio" id="withFever" name="doctor" value="1" required>
-                    <label for="withFever">Sim</label><br>
-                    <input type="radio" id="noFever"name="doctor" value="0">
-                    <label for="nofever">Não</label><br>
-                </div>
-                <div class="field-container">
-                    <h3>Você apresenta um ou mais dos sintomas abaixo?<h3>
-                    <input onchange="extraSelected('pain')" class="extra" type="checkbox" name="pain" value="DorEDesconforto">
-                    <label for="pain">Dores e desconfortos </label><br>
-                    <input onchange="extraSelected('soreThroat')" class="extra" type="checkbox" name="soreThroat" value="DorDeGarganta">
-                    <label for="soreThroat">Dor de Garganta</label><br>
-                    <input onchange="extraSelected('diarreia')" class="extra" type="checkbox" name="diarreia" value="Diarreia">
-                    <label for="diarreia">Diarréia</label><br>
-                    <input onchange="extraSelected('headache')" class="extra" type="checkbox" name="headache" value="DorDeCabeca">
-                    <label for="headache">Dor de Cabeça</label><br>
-                    <input onchange="extraSelected('tasteless')" class="extra" type="checkbox" name="tasteless" value="PerdaDePaladar">
-                    <label for="tasteless">Diminuição de olfato/paladar</label><br>
-                    <input onchange="extraSelected('congestion')" class="extra" type="checkbox" name="congestion" value="CongestaoNasal">
-                    <label for="congestion">Congestão/Corrimento nasal</label><br>
-                    <input onchange="extraSelected('cough')" class="extra" type="checkbox" name="cough" value="tosse">
-                    <label for="cough">Tosse</label><br>
-                    <input onchange="extraSelected('conjunctivitis')" class="extra" type="checkbox" name="conjunctivitis" value="Conjuntivite">
-                    <label for="conjunctivitis">Conjuntivite</label><br>
-                    <input onchange="extraSelected('tired')" class="extra" type="checkbox" name="tired" value="CansacoOuFaltaDeAr">
-                    <label for="tired">Cansaço ou falta de ar</label><br>
-                    <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="NenhumAcima" checked>
-                    <label for="noneAbove">Estou bem de saúde, não apresento nenhum dos sintomas citados.</label><br>
-                </div>
-                <input type="submit" value="ENVIAR">
-            </div>
-        </form>
-    </div>
-</body>
+            </form>
+        </div>
+    </body>
 </html>
 
 

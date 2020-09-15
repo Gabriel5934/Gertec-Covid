@@ -265,36 +265,36 @@ if (!empty($_POST)) {
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="assets/styles/formContinuacao.css" media="screen" />
-    <script type="text/javascript" src="assets/scripts/formContinuacao.js"></script>
-    <title>Avaliação de Saúde</title>
-</head>
-<body>
-    <div id="content-wrapper">
-        <form action="" method="post">
-            <img id="logo" src="assets/media/logo.png">
-            <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
-            <h2>Continuação</h2>
-            <div id="form-wrapper">
-            <div class="field-container">
-                    <h3>Há quanto tempo está com estes sintomas?<h3>
-                    <input type="radio" id="today" name="time" value="Hoje" required>
-                    <label for="today">Hoje</label><br>
-                    <input type="radio" id="fiveDays" name="time" value="De1A5Dias">
-                    <label for="fiveDays">1 a 5 dias</label><br>
-                    <input type="radio" id="tenDays" name="time" value="De6A10Dias">
-                    <label for="tenDays">6 a 10 dias</label><br>
-                    <input type="radio" id="thirteenDays" name="time" value="De11A13Dias">
-                    <label for="thirteenDays">11 a 13 dias</label><br>
-                    <input type="radio" id="moreThan" name="time" value="MaisDe14Dias">
-                    <label for="moreThan">Mais de 14 dias</label><br>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="assets/styles/formContinuacao.css" media="screen" />
+        <script type="text/javascript" src="assets/scripts/formContinuacao.js"></script>
+        <title>Avaliação de Saúde</title>
+    </head>
+    <body>
+        <div id="content-wrapper">
+            <form action="" method="post">
+                <img id="logo" src="assets/media/logo.png">
+                <h1>AVALIAÇÃO DE SAÚDE - COVID-19</h1>
+                <h2>Continuação</h2>
+                <div id="form-wrapper">
+                <div class="field-container">
+                        <h3>Há quanto tempo está com estes sintomas?<h3>
+                        <input type="radio" id="today" name="time" value="Hoje" required>
+                        <label for="today">Hoje</label><br>
+                        <input type="radio" id="fiveDays" name="time" value="De1A5Dias">
+                        <label for="fiveDays">1 a 5 dias</label><br>
+                        <input type="radio" id="tenDays" name="time" value="De6A10Dias">
+                        <label for="tenDays">6 a 10 dias</label><br>
+                        <input type="radio" id="thirteenDays" name="time" value="De11A13Dias">
+                        <label for="thirteenDays">11 a 13 dias</label><br>
+                        <input type="radio" id="moreThan" name="time" value="MaisDe14Dias">
+                        <label for="moreThan">Mais de 14 dias</label><br>
+                    </div>
+                    <input type="submit" value="ENVIAR">
                 </div>
-                <input type="submit" value="ENVIAR">
-            </div>
-        </form>
-    </div>
-</body>
+            </form>
+        </div>
+    </body>
 </html>
