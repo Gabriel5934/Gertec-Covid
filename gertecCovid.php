@@ -93,7 +93,16 @@ if (!empty($_POST)) {
         $username = $_ENV["USERNAME"];
         $password = $_ENV["PASSWORD"];
         
-        $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 1 OR data_registro = CURDATE() ORDER BY id_registro";
+
+        $yesterday = date('Y-m-d',strtotime('-1 days'));
+
+        if (date("D") == "Mon") {
+            $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 2 OR data_registro = CURDATE() ORDER BY id_registro";
+        } else if (date("j") == "1") {
+            $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = $yesterday OR data_registro = CURDATE() ORDER BY id_registro";
+        } else {
+            $retrieveData = "SELECT * FROM condicao_de_saude WHERE data_registro = CURDATE() - 1 OR data_registro = CURDATE() ORDER BY id_registro";
+        }
         
         try {
             $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password); // Instanciando o PDO
