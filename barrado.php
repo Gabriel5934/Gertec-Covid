@@ -6,7 +6,8 @@ if (!isset($_SESSION["time"])) {
     header("Location: gertecCovid.php");
 } else {
     $name = $_SESSION["name"];
-    $area = $_SESSION["area"];
+    $unity = $_SESSION["unity"];
+    $area = $_SESSION["areaForDB"];
 }
 
 ?>
@@ -39,7 +40,7 @@ if (!isset($_SESSION["time"])) {
                     <strong>Manaus</strong><br>
                     (92) 98418-3098<br>
                 </h3>
-                <br><?php echo"<h3 class='negativeText'>$name, $area</h3>" ?><br>
+                <br><?php echo"<h3 class='negativeText'>$name, $unity, $area</h3>" ?><br>
                 <h3 class='negativeText'>
                     Recomendamos que procure atendimento médico o mais breve possível para realização do diagnóstico. 
                 </h3>
