@@ -13,28 +13,26 @@ $query = "query";
 
 //------------------------------------------------------------------------//
 
-if (isset($_REQUEST["getSectors"])) {
-    $getSectors = $_REQUEST["getSectors"];
-    if ($getSectors !== "") {
-        $sql = "SELECT setor_nome, id_setor FROM setores WHERE unidade_id = $getSectors";
-        $x = databaseRequestHandler($sql, $query);
-        $response = array();
-        foreach ($x as $y) {
-            array_push($response, [$y["setor_nome"], $y["id_setor"]]);
-        }
-        echo (json_encode($response));
-    }
-}   
+// if (isset($_REQUEST["getSectors"])) {
+//     $getSectors = $_REQUEST["getSectors"];
+//     if ($getSectors !== "") {
+//         $sql = "SELECT setor_nome, id_setor FROM setores WHERE unidade_id = $getSectors";
+//         $x = databaseRequestHandler($sql, $query);
+//         $response = array();
+//         foreach ($x as $y) {
+//             array_push($response, [$y["setor_nome"], $y["id_setor"]]);
+//         }
+//         echo (json_encode($response));
+//     }
+// }   
 
-if (!empty($_POST)) {
+if (empty($_POST["unity"])) {
+    header("Location: unidade.php");
+}
 
-    $unity = $_POST["unity"];
+if (!empty($_POST["name"])) {
+
     $area = $_POST["area"];
-
-    $unityQuery = databaseRequestHandler("SELECT unidade_nome FROM unidades WHERE id_unidade = $unity", $query);
-    foreach ($unityQuery as $i) {
-        $unity = $i["unidade_nome"];
-    }
 
     $extraSymptoms = array(
         "pain",
@@ -73,6 +71,13 @@ if (!empty($_POST)) {
         $name = $_POST["name"];
         $contact = $_POST["contact"];
         $doctor = $_POST["doctor"];
+        
+        session_start();
+        $unityId = $_SESSION["unityFromForm"]; 
+        $unityQuery = databaseRequestHandler("SELECT unidade_nome FROM unidades WHERE id_unidade = $unityId", $query);
+        foreach ($unityQuery as $i) {
+            $unity = $i["unidade_nome"];
+        }
 
         $areaQuery = databaseRequestHandler("SELECT setor_nome FROM setores WHERE id_setor = $area", $query);
         foreach ($areaQuery as $i) {
@@ -143,7 +148,7 @@ if (!empty($_POST)) {
         if (!$caught) {
             session_start();       
             $_SESSION["name"] = $_POST["name"];
-            $_SESSION["unity"] = $unity;
+            $_SESSION["unity"] = $unity; 
             $_SESSION["area"] = $area;
             $_SESSION["date"] = date("d/m/Y\, H:i");
             $_SESSION["symptoms"] = $firstFormExtra;
@@ -155,9 +160,9 @@ if (!empty($_POST)) {
         }
     } else { # Se o colaborador não estiver saudável
         session_start();   
-        $_SESSION["name"] = $_POST["name"]; 
-        $_SESSION["unity"] = $unity; 
+        $_SESSION["name"] = $_POST["name"];  
         $_SESSION["area"] = $area;
+        $_SESSION["unity"] = $_SESSION["unityFromForm"]; 
         $_SESSION["symptoms"] = $firstFormExtra;
         $_SESSION["contact"] = $_POST["contact"];
         $_SESSION["doctor"] = $_POST["doctor"];
@@ -197,28 +202,23 @@ if (!empty($_POST)) {
                         <input type="text" name="name" required>
                     </div>
                     <div class="field-container">
-                        <label for="unity">Unidade:</label>
-                        <select onchange="unityChange(this.value)" class="unity" id="unity" name="unity" required>
-                            <option disabled selected value>Selecione uma unidade</option>
+                        <label for="area">Área:</label>
+                        <select class="sector" id="area" name="area" required>
+                            <option disabled selected value>Selecione um setor</option>
                             <?php 
-                                $sql = "SELECT unidade_nome FROM unidades";
+                                session_start();
+                                $_SESSION["unityFromForm"] = $_POST["unity"];
+                                $unityId = $_POST["unity"];
+                                $sql = "SELECT setor_nome, id_setor FROM setores WHERE unidade_id = $unityId";
                                 $result = databaseRequestHandler($sql, $query);
                                 $unidades = array();
                                 foreach ($result as $unidade) {
-                                    $aux = $unidade["unidade_nome"];
+                                    $aux = $unidade["setor_nome"];
+                                    $sectorId = $unidade["id_setor"];
                                     array_push($unidades, $aux);
                                     $pos = array_search($aux, $unidades) + 1;
-                                    echo("<option value='$pos'>$aux</option>");
+                                    echo("<option value='$sectorId'>$aux</option>");
                                 }
-                            ?>
-                        </select>
-                    </div>
-                    <div class="field-container">
-                        <label for="area">Área:</label>
-                        <select class="sector" id="area" name="area" required>
-                            <option disabled selected value>Primeiro, selecione uma unidade</option>
-                            <?php
-
                             ?>
                         </select>
                     </div>
@@ -259,7 +259,7 @@ if (!empty($_POST)) {
                         <input onchange="noneSelected()" id="noneAbove" type="checkbox" name="noneAbove" value="NenhumAcima" checked>
                         <label for="noneAbove">Estou bem de saúde, não apresento nenhum dos sintomas citados.</label><br>
                     </div>
-                    <input type="submit" value="ENVIAR">
+                    <input type="submit" value="ENVIAR" id="sendFormInput">
                 </div>
             </form>
         </div>

@@ -108,7 +108,7 @@ input[type="radio"]+label, input[type="checkbox"]+label {
     font-weight: 100;
 }
 
-input[type="submit"] {
+#sendFormInput {
     width: auto; height: 50px;
     border: 0 solid transparent;
     border-radius: 10px;

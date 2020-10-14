@@ -9,7 +9,7 @@ if (isset($_SESSION["name"])) {
     $date = $_SESSION["date"];
     $message = "<h1 id='associate'>$name, $unidade, $area, $date</h1>";
 } else {
-    header("Location: gertecCovid.php");
+    header("Location: unidade.php");
 }
 
 ?>

@@ -14,24 +14,24 @@ const noneSelected = () => {
     }
 }
 
-const unityChange = (unity) => {   
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        const sectors = JSON.parse(this.responseText.split("<")[0]);
-        while (sectorDropdown[0].firstChild) {
-            sectorDropdown[0].removeChild(sectorDropdown[0].firstChild);
-        }
-        for (let i of sectors) {
-            console.log(i);
-            var opt = document.createElement('option');
-            opt.value = i[1];
-            opt.innerHTML = i[0];
-            sectorDropdown[0].appendChild(opt);
-        }
-      }
-    };
-    xmlhttp.open("GET", "gertecCovid.php?getSectors=" + unity, true);
-    xmlhttp.send();
-}
+// const unityChange = (unity) => {   
+//     var xmlhttp = new XMLHttpRequest();
+//     xmlhttp.onreadystatechange = function() {
+//       if (this.readyState == 4 && this.status == 200) {
+//         const sectors = JSON.parse(this.responseText.split("<")[0]);
+//         while (sectorDropdown[0].firstChild) {
+//             sectorDropdown[0].removeChild(sectorDropdown[0].firstChild);
+//         }
+//         for (let i of sectors) {
+//             // console.log(i);
+//             var opt = document.createElement('option');
+//             opt.value = i[1];
+//             opt.innerHTML = i[0];
+//             sectorDropdown[0].appendChild(opt);
+//         }
+//       }
+//     };
+//     xmlhttp.open("GET", "gertecCovid.php?getSectors=" + unity, true);
+//     xmlhttp.send();
+// }
 

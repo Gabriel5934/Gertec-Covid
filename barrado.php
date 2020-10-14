@@ -3,7 +3,7 @@
 session_start();
 if (!isset($_SESSION["time"])) {
     header("Refresh:0");
-    header("Location: gertecCovid.php");
+    header("Location: unidade.php");
 } else {
     $name = $_SESSION["name"];
     $unity = $_SESSION["unity"];
